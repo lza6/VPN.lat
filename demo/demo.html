@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VPN.lat 逆向 Demo</title>
+<style>
+:root{--g:#05a801;--n:#1c2b40;--bg:#f6f8fb;--card:#fff}
+*{box-sizing:border-box}
+body{font-family:-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:#2a3646;margin:0;padding:40px 20px}
+.wrap{max-width:960px;margin:auto}
+h1{color:var(--n)}
+.badge{display:inline-block;background:#e8f5e9;color:var(--g);border-radius:999px;padding:4px 12px;font-size:13px;margin-bottom:16px}
+.card{background:var(--card);border-radius:16px;padding:20px;margin:16px 0;box-shadow:0 4px 16px rgba(0,0,0,.06)}
+button{background:var(--g);color:#fff;border:0;border-radius:999px;padding:10px 22px;font-size:14px;cursor:pointer;margin-right:8px}
+button:hover{opacity:.9}
+pre{background:#0f1720;color:#7ee787;padding:14px;border-radius:10px;overflow:auto;max-height:400px;font-size:12px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:8px;border-bottom:1px solid #e6ebf1}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>🔓 VPN.lat 协议还原 Demo</h1>
+<div class="badge">AES-256-GCM 签名已还原 · 端口 8908 · 仅供研究</div>
+<div class="card">
+  <button onclick="call('/api/status')">健康检查</button>
+  <button onclick="call('/api/servers')">国家列表 /server</button>
+  <button onclick="call('/api/cities/1')">城市 /country/1/server</button>
+  <button onclick="call('/api/ovpn/1')">OpenVPN /opvn/server/1</button>
+  <button onclick="call('/api/wire/1')">WireGuard /wire/server/1</button>
+</div>
+<div class="card"><h3>响应</h3><pre id="out">点击按钮测试…</pre></div>
+<div class="card"><h3>协议要点</h3>
+<table>
+<tr><th>项</th><th>值</th></tr>
+<tr><td>后端</td><td>https://hetecn.com（Firebase RTDB 已弃用）</td></tr>
+<tr><td>签名头</td><td>info = base64(AES-256-GCM(pkg-ver-build) → cipher+nonce+tag)</td></tr>
+<tr><td>密钥</td><td>4×8 字节硬编码常量拼接（LocaleConfig/NetworkConfig/CacheConfig/MetricsConfig）</td></tr>
+<tr><td>Geo-Gate</td><td>84 国 IP 白名单 + 数据中心 ASN 拦截</td></tr>
+</table>
+</div>
+</div>
+<script>
+async function call(ep){
+  const o=document.getElementById('out'); o.textContent='加载中…';
+  try{ const r=await fetch(ep); const j=await r.json(); o.textContent=JSON.stringify(j,null,2); }
+  catch(e){ o.textContent='错误: '+e; }
+}
+</script>
+</body>
+</html>
